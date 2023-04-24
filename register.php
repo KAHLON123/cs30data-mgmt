@@ -1,40 +1,35 @@
 <?php include('connect.php'); ?>
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
  <head>
     <title>LOGIN</title>
  </head>
- <body>
-    <h1>Already registered</h1>
-    <section>
-        <form>
-            <label>Username</label>
-            <input type="text" name="username"><br />
-            <label>Password</label>
-            <input type="text" name="password">
-            <input type="submit" value="submit">
-        </form>
-    </section>
-    <h1>New user</h1>
-    <section>
-        <form>
-            <label>Username</label>
-            <input type="text" name="new-username"><br />
-            <label>Password</label>
-            <input type="text" name="new-password">
-            <input type="submit" value="submit">
-        </form>
-    </section>
-    <?php
-// Include config file
-require_once "config.php";
- 
-// Define variables and initialize with empty values
+<body>
+<h1>Already registered</h1>
+<section>
+    <form>
+        <label>Username</label>
+        <input type="text" name="username"><br />
+        <label>Password</label>
+        <input type="text" name="password">
+        <input type="submit" value="submit">
+    </form>
+</section>
+<h1>New user</h1>
+<section>
+    <form>
+        <label>Username</label>
+        <input type="text" name="new-username"><br />
+        <label>Password</label>
+        <input type="text" name="new-password">
+        <input type="submit" value="submit">
+    </form>
+</section>
+<?php
 $username = $password = $confirm_password = "";
 $username_err = $password_err = $confirm_password_err = "";
  
-// Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if(isset($_POST['submit'])){
  
     // Validate username
     if(empty(trim($_POST["username"]))){
@@ -59,10 +54,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 
                 if(mysqli_stmt_num_rows($stmt) == 1){
                     $username_err = "This username is already taken.";
-                } else{
+                } else {
                     $username = trim($_POST["username"]);
                 }
-            } else{
+            } else {
                 echo "Oops! Something went wrong. Please try again later.";
             }
 
@@ -99,8 +94,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
-            
-            // Set parameters
+       
             $param_username = $username;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
             
@@ -116,8 +110,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             mysqli_stmt_close($stmt);
         }
     }
-    
-    // Close connection
-    mys
- </body>
+}
+
+function indexOfUser($item, $arr) {
+    for ($i = 0; $i < count($arr); $i++) {
+      if ($item === $arr[$i]) {
+        return $i;
+      }
+    }
+    return -1;
+  }
+?>
+</body>
 </html>
