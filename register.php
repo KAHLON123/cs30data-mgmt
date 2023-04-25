@@ -1,4 +1,11 @@
-<?php include('connect.php'); ?>
+<?php session_start(); 
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+    header("location: welcome.php");
+    exit;
+}
+include('connect.php'); ?>
+
 <!DOCTYPE HTML>
 <html>
  <head>
@@ -21,7 +28,9 @@
         <label>Username</label>
         <input type="text" name="new-username"><br />
         <label>Password</label>
-        <input type="text" name="new-password">
+        <input type="text" name="new-password"><br />
+        <label>Confirm new password</label>
+        <input type="text" name="confirm-password">
         <input type="submit" value="submit">
     </form>
 </section>
@@ -30,63 +39,65 @@ $username = $password = $confirm_password = "";
 $username_err = $password_err = $confirm_password_err = "";
  
 if(isset($_POST['submit'])){
- 
-    // Validate username
-    if(empty(trim($_POST["username"]))){
+    $newUsername = $_POST['new-username'];
+    $newPassword = $_POST['new-password'];
+    // enter username in database after validation (not empty, no weird characters)
+    if(empty(trim($_POST["username"]))) {
         $username_err = "Please enter a username.";
-    } elseif(!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))){
+    } elseif(!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))) {
         $username_err = "Username can only contain letters, numbers, and underscores.";
-    } else{
-        // Prepare a select statement
-        $sql = "SELECT id FROM users WHERE username = ?";
-        
-        if($stmt = mysqli_prepare($link, $sql)){
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+    } else {
+        $sql = "INSERT INTO `users`(`username`, `passwords`) VALUES ('" . $newUsername . "','" . $newPassword . "')";
+        if (mysqli_query($conn, $sql)) {
+            echo "Ready to shop!";
+          } else {
+            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+          }
+        // if($stmt = mysqli_prepare($link, $sql)){
+        //     // Bind variables to the prepared statement as parameters
+        //     mysqli_stmt_bind_param($stmt, "s", $param_username);
             
-            // Set parameters
-            $param_username = trim($_POST["username"]);
+        //     // Set parameters
+        //     $param_username = trim($_POST["username"]);
             
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                /* store result */
-                mysqli_stmt_store_result($stmt);
+        //     // Attempt to execute the prepared statement
+        //     if(mysqli_stmt_execute($stmt)){
+        //         /* store result */
+        //         mysqli_stmt_store_result($stmt);
                 
-                if(mysqli_stmt_num_rows($stmt) == 1){
-                    $username_err = "This username is already taken.";
-                } else {
-                    $username = trim($_POST["username"]);
-                }
-            } else {
-                echo "Oops! Something went wrong. Please try again later.";
-            }
+        //         if(mysqli_stmt_num_rows($stmt) == 1){
+        //             $username_err = "This username is already taken.";
+        //         } else {
+        //             $username = trim($_POST["username"]);
+        //         }
+        //     } else {
+        //         echo "Oops! Something went wrong. Please try again later.";
+        //     }
 
-            // Close statement
-            mysqli_stmt_close($stmt);
-        }
+        //     // Close statement
+        //     mysqli_stmt_close($stmt);
+        // }
     }
     
     // Validate password
-    if(empty(trim($_POST["password"]))){
-        $password_err = "Please enter a password.";     
-    } elseif(strlen(trim($_POST["password"])) < 6){
-        $password_err = "Password must have atleast 6 characters.";
-    } else{
+    if(empty(trim($_POST["password"]))) {
+        $password_err = "Please enter a password.";
+    } else {
         $password = trim($_POST["password"]);
     }
     
     // Validate confirm password
-    if(empty(trim($_POST["confirm_password"]))){
+    if(empty(trim($_POST["confirm_password"]))) {
         $confirm_password_err = "Please confirm password.";     
-    } else{
+    } else {
         $confirm_password = trim($_POST["confirm_password"]);
-        if(empty($password_err) && ($password != $confirm_password)){
+        if(empty($password_err) && ($password != $confirm_password)) {
             $confirm_password_err = "Password did not match.";
         }
     }
     
     // Check input errors before inserting in database
-    if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
+    if(empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
         
         // Prepare an insert statement
         $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
