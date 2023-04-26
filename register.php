@@ -14,7 +14,7 @@ include('connect.php'); ?>
 <body>
 <h1>Already registered</h1>
 <section>
-    <form>
+    <form action="register.php" method="POST">
         <label>Username</label>
         <input type="text" name="username"><br />
         <label>Password</label>
@@ -47,9 +47,13 @@ if(isset($_POST['submit'])){
     } elseif(!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))) {
         $username_err = "Username can only contain letters, numbers, and underscores.";
     } else {
-        $sql = "INSERT INTO `users`(`username`, `passwords`) VALUES ('" . $newUsername . "','" . $newPassword . "')";
+        $sql = "INSERT INTO `users`(`username`, `passwords`) VALUES (?, ?)";
+        $stmt= $conn->prepare($sql);
+        $stmt->bind_param("ss", $, $);
+        $stmt->execute();
         if (mysqli_query($conn, $sql)) {
             echo "Ready to shop!";
+            header("location: shop.php");
           } else {
             echo "Error: " . $sql . "<br>" . mysqli_error($conn);
           }
