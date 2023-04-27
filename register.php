@@ -37,7 +37,7 @@ include('connect.php'); ?>
 <?php
 $username = $password = $confirm_password = "";
 $username_err = $password_err = $confirm_password_err = "";
- 
+
 if(isset($_POST['submit'])){
     $newUsername = $_POST['new-username'];
     $newPassword = $_POST['new-password'];
@@ -47,10 +47,11 @@ if(isset($_POST['submit'])){
     } elseif(!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))) {
         $username_err = "Username can only contain letters, numbers, and underscores.";
     } else {
-        $sql = "INSERT INTO `users`(`username`, `passwords`) VALUES (?, ?)";
-        $stmt= $conn->prepare($sql);
-        $stmt->bind_param("ss", $, $);
-        $stmt->execute();
+        $sql = "INSERT INTO `users` (username, passwords) VALUES ('bruh', 'bruh')";
+        // $stmt= $conn->prepare($sql);
+        // // $stmt->bind_param("ss", $username, $password);
+        // $stmt->execute();
+        
         if (mysqli_query($conn, $sql)) {
             echo "Ready to shop!";
             header("location: shop.php");
