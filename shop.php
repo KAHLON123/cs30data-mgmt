@@ -1,4 +1,12 @@
-<?php include('connect.php'); ?>
+<?php 
+session_start();
+// Check if the user is logged in, if not then redirect to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: register.php");
+    exit;
+}
+include('connect.php'); ?>
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -26,8 +34,6 @@ if (isset($_POST['submit'])){
     
     echo "hi";
 }
-
-
 ?>
 
 </body>
