@@ -1,11 +1,10 @@
 <?php session_start(); 
-// Check if the user is already logged in, if yes then redirect him to welcome page
+// Check if the user is already logged in, if yes then redirect him to shop page
 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    header("location: welcome.php");
+    header("location: shop.php");
     exit;
 }
 include('connect.php'); ?>
-
 <!DOCTYPE HTML>
 <html>
  <head>
@@ -35,47 +34,29 @@ include('connect.php'); ?>
     </form>
 </section>
 <?php
-$username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
-
 if (isset($_POST['submit1'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $sql = "SELECT * FROM `users` WHERE 1";
-    $query = mysql_query($sql, $conn);
-    echo ``;
+    $sql = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
+    $query = mysqli_query($conn, $sql);
+    if ($query) {
+        $_SESSION['loggedin'] = true;
+        header('location: shop.php');
+    } else {
+        echo "That user does not exist";
+    }
 }
-
 require_once('connect.php');
 if(isset($_POST['submit2'])){
-    echo "hi";
     $newUsername = $_POST['new-username'];
     $newPassword = $_POST['new-password'];
-        $sql = "INSERT INTO users (username, passwords) VALUES ('$newUsername','$newPassword')";
-$result=mysql_query($conn,$sql);
-if($result){
-return"Suck";
-}
-else{
-return "FU";}
-        // if (mysqli_query($conn, $sql)) {
-        //     echo "Ready to shop!";
-        //     header("location: shop.php");
-        //   } else {
-        //     echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        //   }
-        //     // Close statement
-        //     mysqli_stmt_close($stmt);
-        // }
-//helper
-function indexOfUser($item, $arr) {
-    for ($i = 0; $i < count($arr); $i++) {
-      if ($item === $arr[$i]) {
-        return $i;
-      }
+    $sql = "INSERT INTO users (username, passwords) VALUES ('$newUsername','$newPassword')";
+    $query = mysqli_query($conn, $sql);
+    if ($query) {
+        $_SESSION['loggedin'] = true;
+        header('location: shop.php');
     }
-    return -1;
-  }
+}
 ?>
 </body>
 </html>

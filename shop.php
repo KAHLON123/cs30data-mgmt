@@ -1,7 +1,7 @@
 <?php 
 session_start();
 // Check if the user is logged in, if not then redirect to login page
-if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+if( $_SESSION["loggedin"] !== true){
     header("location: register.php");
     exit;
 }
@@ -30,7 +30,6 @@ include('connect.php'); ?>
 
 <?php
 if (isset($_POST['submit'])){
-    //check if items are already in favourites
     
     echo "hi";
 }
