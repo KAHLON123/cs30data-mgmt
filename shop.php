@@ -1,7 +1,7 @@
 <?php 
 session_start();
 // Check if the user is logged in, if not then redirect to login page
-if ( $_SESSION["loggedin"] !== true){
+if ( $_SESSION["loggedin"] == false){
     header("location: register.php");
     exit;
 }
@@ -35,24 +35,29 @@ if (isset($_GET['logout'])) {
         
     </form>
 </section> -->
-<p> <a href="shop.php?logout='1'" style="color: red;">logout</a> </p>
 <input type="checkbox" name="car" value="checkbox_value">
-<img src="img/daCar.png" width="500"><br />
 <input type="checkbox" name="diesel" value="checkbox_value">
-<img src="img/vin-diesel.jpg"> <br />
 <input type="checkbox" name="coffee" value="checkbox_value">
-<img src="img/coffee.jpg" width="500"> <br />
 <input type="checkbox" name="food" value="checkbox_value">
-<img src="img/food-img.jpg" width="500"> <br />
-<label>Add</label>
+<p> <a href="shop.php?logout='1'" style="color: red;">logout</a> </p>
 
 <?php
+//get id of favourited items from users table to display
+//  $sql = "SELECT * FROM users WHERE favourites = '$username'";
+//  $getFavSql = "SELECT * FROM items WHERE ID = '$favID'"
+
+ //display all items
+ $disAllSql = "SELECT img FROM items WHERE 1";
+ $query = mysqli_query($conn, $disAllSql);
+ $usersArr = mysqli_fetch_assoc($query);
+ foreach ($usersArr as $x => $x_value) {
+     echo "<img src='img/" . $x_value . "' width='500'><br />";
+ }
 if (isset($_POST['submit'])){
     $sql = "SELECT `ID`, `username`, `passwords` FROM `users` WHERE 1";
     echo "hi";
 }
 if (isset($_POST['logout'])) {
-    echo "yo";
     $_SESSION['loggedin'] = false;
     header("location: register.php");
 }
