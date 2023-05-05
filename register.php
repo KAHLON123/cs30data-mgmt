@@ -39,20 +39,22 @@ if (isset($_POST['submit1'])) {
     $password = $_POST['password'];
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $query = mysqli_query($conn, $sql);
-    $usersArr = mysqli_fetch_assoc($query);
+    $usersArr = mysqli_fetch_all($query);
     foreach ($usersArr as $x => $x_value) {
         echo "Key=" . $x . ", Value=" . $x_value;
         echo "<br>";
     }
     if ($query) {
-        $_SESSION['loggedin'] = true;
-        $_SESSION['loggedas'] = $username;
-        header('location: shop.php');
-        
-    } else {
-        echo "That user does not exist";
+        if ($password == $usersArr['passwords']) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['loggedas'] = $username;
+            header('location: shop.php');
+        } else {
+            echo "That user does not exist";
+        }
     }
 }
+
 if (isset($_POST['submit2'])){
     $newUsername = $_POST['new-username'];
     $newPassword = $_POST['new-password'];
@@ -61,6 +63,7 @@ if (isset($_POST['submit2'])){
     if ($query) {
      
         $_SESSION['loggedin'] = true;
+        $_SESSION['loggedas'] = $newUsername;
         header('location: shop.php');
     }
 }

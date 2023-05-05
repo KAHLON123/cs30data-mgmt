@@ -32,30 +32,40 @@ if (isset($_GET['logout'])) {
         <option value="3">Coffee</option>
         <option value="4">Food</option>
         <input type="submit" value="submit"><br />
-        
     </form>
 </section> -->
+
 <input type="checkbox" name="car" value="checkbox_value">
 <input type="checkbox" name="diesel" value="checkbox_value">
 <input type="checkbox" name="coffee" value="checkbox_value">
 <input type="checkbox" name="food" value="checkbox_value">
+<input type="submit" value="submit">
 <p> <a href="shop.php?logout='1'" style="color: red;">logout</a> </p>
 
 <?php
 //get id of favourited items from users table to display
-//  $sql = "SELECT * FROM users WHERE favourites = '$username'";
-//  $getFavSql = "SELECT * FROM items WHERE ID = '$favID'"
+$sql = "SELECT * FROM users WHERE favourites = '$username'"; 
+$getFavSql = "SELECT * FROM items WHERE ID = '$favID'"
+$getFavSql = "SELECT favourites FROM items WHERE username = '$_SESSION['loggedas']'"
+$favQuery = mysqli_query($conn, $getFavSql);
+JSON.parse($favQuery) ?? [];
 
- //display all items
+// display favourited items
+$favItemsArr = mysqli_fetch_all($favQuery);
+ foreach($favItemsArr as $itemArr) {
+    echo "<img src='img/" . $itemArr[0] . "' width='500'><br />";
+ }
+ echo $_SESSION['loggedas'];
+// display all items
  $disAllSql = "SELECT img FROM items WHERE 1";
  $query = mysqli_query($conn, $disAllSql);
- $usersArr = mysqli_fetch_assoc($query);
- foreach ($usersArr as $x => $x_value) {
-     echo "<img src='img/" . $x_value . "' width='500'><br />";
+ $itemsArr = mysqli_fetch_all($query);
+ var_dump($itemsArr);
+ foreach($itemsArr as $itemArr) {
+    echo "<img src='img/" . $itemArr[0] . "' width='500'><br />";
  }
 if (isset($_POST['submit'])){
     $sql = "SELECT `ID`, `username`, `passwords` FROM `users` WHERE 1";
-    echo "hi";
 }
 if (isset($_POST['logout'])) {
     $_SESSION['loggedin'] = false;
