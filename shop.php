@@ -25,53 +25,75 @@ if (isset($_GET['logout'])) {
 <h2>les gooo</h2>
 <img src="img/walmart-logo.jpeg"><br />
 <h1>Toggle items into/out of cart: </h1>
-<!-- <section>
+<section>
     <form action="shop.php" method="POST">
-        <option value="1">Car</option>
-        <option value="2">Diesel</option>
-        <option value="3">Coffee</option>
-        <option value="4">Food</option>
+    <select name="selection">
+        <option value="1">Add to favourites</option>
+        <option value="2">Remove from favourites</option>
+        <option value="3">Filter by </option>
+        <option value="4">Sort by </option>
+    </select>
         <input type="submit" value="submit"><br />
     </form>
-</section> -->
-
+</section>
+<label>Car</label>
 <input type="checkbox" name="car" value="checkbox_value">
+<label>Diesel</label>
 <input type="checkbox" name="diesel" value="checkbox_value">
+<label>Coffee</label>
 <input type="checkbox" name="coffee" value="checkbox_value">
+<label>Food</label>
 <input type="checkbox" name="food" value="checkbox_value">
-<input type="submit" value="submit">
 <p> <a href="shop.php?logout='1'" style="color: red;">logout</a> </p>
-
 <?php
-//get id of favourited items from users table to display
-$sql = "SELECT * FROM users WHERE favourites = '$username'"; 
-$getFavSql = "SELECT * FROM items WHERE ID = '$favID'"
-$getFavSql = "SELECT favourites FROM items WHERE username = '$_SESSION['loggedas']'"
-$favQuery = mysqli_query($conn, $getFavSql);
-JSON.parse($favQuery) ?? [];
-
-// display favourited items
-$favItemsArr = mysqli_fetch_all($favQuery);
- foreach($favItemsArr as $itemArr) {
-    echo "<img src='img/" . $itemArr[0] . "' width='500'><br />";
- }
- echo $_SESSION['loggedas'];
+// $favStr = JSON.parse($favQuery) ?? [];
+// var_dump($favStr);
 // display all items
  $disAllSql = "SELECT img FROM items WHERE 1";
- $query = mysqli_query($conn, $disAllSql);
- $itemsArr = mysqli_fetch_all($query);
- var_dump($itemsArr);
+ $disAllquery = mysqli_query($conn, $disAllSql);
+ $itemsArr = mysqli_fetch_all($disAllquery);
  foreach($itemsArr as $itemArr) {
-    echo "<img src='img/" . $itemArr[0] . "' width='500'><br />";
+    echo "<img src='img/" . $itemArr[0] . "' width='500'>";
  }
 if (isset($_POST['submit'])){
-    $sql = "SELECT `ID`, `username`, `passwords` FROM `users` WHERE 1";
+    switch ($_POST['selection']){
+        case '1':
+            add();
+        case '2':
+            remove();
+        case '3':
+            filterItems();
+        case '4':
+            sortItems();
+        case '5':
+            displayFav();
+    }
 }
 if (isset($_POST['logout'])) {
     $_SESSION['loggedin'] = false;
     header("location: register.php");
 }
-?>
 
+function add(){
+
+}
+function remove(){
+
+}
+function filterItems(){
+
+}
+function sortItems(){
+
+}
+function displayFav(){
+$getFavSql = "SELECT favourites FROM users WHERE username = '$_SESSION['loggedas']'";
+$favQuery = mysqli_query($conn, $getFavSql);
+$favItemsArr = mysqli_fetch_all($favQuery);
+ foreach($favItemsArr as $itemArr) {
+    echo "<img src='img/" . $itemArr[0] . "' width='500'><br />";
+ }
+}
+?>
 </body>
 </html>

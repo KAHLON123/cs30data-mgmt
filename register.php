@@ -40,12 +40,13 @@ if (isset($_POST['submit1'])) {
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $query = mysqli_query($conn, $sql);
     $usersArr = mysqli_fetch_all($query);
-    foreach ($usersArr as $x => $x_value) {
+    var_dump($usersArr);
+    foreach ($usersArr as $userArr) {
         echo "Key=" . $x . ", Value=" . $x_value;
         echo "<br>";
     }
     if ($query) {
-        if ($password == $usersArr['passwords']) {
+        if ($password == $usersArr[0][2]) {
             $_SESSION['loggedin'] = true;
             $_SESSION['loggedas'] = $username;
             header('location: shop.php');
@@ -54,14 +55,12 @@ if (isset($_POST['submit1'])) {
         }
     }
 }
-
 if (isset($_POST['submit2'])){
     $newUsername = $_POST['new-username'];
     $newPassword = $_POST['new-password'];
     $sql = "INSERT INTO users (username, passwords) VALUES ('$newUsername','$newPassword')";
     $query = mysqli_query($conn, $sql);
-    if ($query) {
-     
+    if ($query) {    
         $_SESSION['loggedin'] = true;
         $_SESSION['loggedas'] = $newUsername;
         header('location: shop.php');
