@@ -40,7 +40,6 @@ if (isset($_POST['submit1'])) {
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $query = mysqli_query($conn, $sql);
     $usersArr = mysqli_fetch_all($query);
-    var_dump($usersArr);
     foreach ($usersArr as $userArr) {
         echo "Key=" . $x . ", Value=" . $x_value;
         echo "<br>";

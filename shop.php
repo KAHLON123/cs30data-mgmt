@@ -31,23 +31,22 @@ if (isset($_GET['logout'])) {
         <option value="1">Add to favourites</option>
         <option value="2">Remove from favourites</option>
         <option value="3">Filter by </option>
-        <option value="4">Sort by </option>
+        <option value="4">Sort by value</option>
+        <option value="5">Only display favourites </option>
     </select>
         <input type="submit" value="submit"><br />
     </form>
 </section>
 <label>Car</label>
-<input type="checkbox" name="car" value="checkbox_value">
+<input type="checkbox" name="car" value="on">
 <label>Diesel</label>
-<input type="checkbox" name="diesel" value="checkbox_value">
+<input type="checkbox" name="diesel" value="on">
 <label>Coffee</label>
-<input type="checkbox" name="coffee" value="checkbox_value">
+<input type="checkbox" name="coffee" value="on">
 <label>Food</label>
-<input type="checkbox" name="food" value="checkbox_value">
+<input type="checkbox" name="food" value="on">
 <p> <a href="shop.php?logout='1'" style="color: red;">logout</a> </p>
 <?php
-// $favStr = JSON.parse($favQuery) ?? [];
-// var_dump($favStr);
 // display all items
  $disAllSql = "SELECT img FROM items WHERE 1";
  $disAllquery = mysqli_query($conn, $disAllSql);
@@ -75,7 +74,15 @@ if (isset($_POST['logout'])) {
 }
 
 function add(){
-
+    // parse array of favourite item IDs 
+    $getFavSql = "SELECT favourites FROM users WHERE username = '$_SESSION['loggedas']'";
+    $favQuery = mysqli_query($conn, $getFavSql);
+    $oldFavStr = JSON.parse($favQuery) ?? [];
+    echo $oldFavStr;
+    //compare new with existing values and insert into user favourite list
+    //for ($n = 0; $n < count($oldFavStr));
+    // $sql = "INSERT INTO users (favourites) WHERE username = '$_SESSION['loggedas']' VALUES ('$favStr')";
+    // $query = mysqli_query($conn, $getFavSql);
 }
 function remove(){
 
