@@ -8,7 +8,6 @@ if ( $_SESSION["loggedin"] == false){
 include('connect.php'); 
 $sql = "SELECT `ID`, `username`, `passwords` FROM `users` WHERE 1";
 $query = mysqli_query($conn, $sql);
-var_dump($query);
 if (isset($_GET['logout'])) {
     session_destroy();
     unset($_SESSION['username']);
@@ -27,24 +26,26 @@ if (isset($_GET['logout'])) {
 <h1>Toggle items into/out of cart: </h1>
 <section>
     <form action="shop.php" method="POST">
-    <select name="selection">
+    <select name="s">
         <option value="1">Add to favourites</option>
         <option value="2">Remove from favourites</option>
         <option value="3">Filter by </option>
-        <option value="4">Sort by value</option>
+        <option value="4">Alphabetize</option>
         <option value="5">Only display favourites </option>
     </select>
-        <input type="submit" value="submit"><br />
+        <input type="submit" value="submit" name="submit"><br />
     </form>
 </section>
 <label>Car</label>
-<input type="checkbox" name="car" value="on">
+<input type="checkbox" value="car" name="option[]">
 <label>Diesel</label>
-<input type="checkbox" name="diesel" value="on">
+<input type="checkbox" value="diesel" name="option[]">
 <label>Coffee</label>
-<input type="checkbox" name="coffee" value="on">
+<input type="checkbox" value="coffee" name="option[]">
 <label>Food</label>
-<input type="checkbox" name="food" value="on">
+<input type="checkbox" value="food" name="option[]">
+<label>Hat 1</label>
+<input type="checkbox" value="hat1" name="option[]">
 <p> <a href="shop.php?logout='1'" style="color: red;">logout</a> </p>
 <?php
 // display all items
@@ -55,16 +56,16 @@ if (isset($_GET['logout'])) {
     echo "<img src='img/" . $itemArr[0] . "' width='500'>";
  }
 if (isset($_POST['submit'])){
-    switch ($_POST['selection']){
-        case '1':
-            add();
-        case '2':
+    switch ($_POST['s']){
+        case "1":
+            add($conn);
+        case "2":
             remove();
-        case '3':
+        case "3":
             filterItems();
-        case '4':
+        case "4":
             sortItems();
-        case '5':
+        case "5":
             displayFav();
     }
 }
@@ -73,16 +74,21 @@ if (isset($_POST['logout'])) {
     header("location: register.php");
 }
 
-function add(){
+function add($conn){
     // parse array of favourite item IDs 
-    $getFavSql = "SELECT favourites FROM users WHERE username = '$_SESSION['loggedas']'";
+    $curr_user = $_SESSION["loggedas"];
+    $getFavSql = "SELECT favourites FROM users WHERE username = '$curr_user'";
     $favQuery = mysqli_query($conn, $getFavSql);
-    $oldFavStr = JSON.parse($favQuery) ?? [];
-    echo $oldFavStr;
-    //compare new with existing values and insert into user favourite list
-    //for ($n = 0; $n < count($oldFavStr));
-    // $sql = "INSERT INTO users (favourites) WHERE username = '$_SESSION['loggedas']' VALUES ('$favStr')";
-    // $query = mysqli_query($conn, $getFavSql);
+    $oldFavArr = json_decode(mysqli_fetch_all($favQuery));
+    // get values to add
+    $favArr = $_POST['option[]'];
+    foreach ($favArr as $item){
+        array_push($oldFavArr, $item);
+    }
+    //delete duplicate values and insert into user favourite list
+    $finalFavArr = json_encode(array_unique($oldFavArr));
+    $sql = "UPDATE users SET favourites = '$favStr' WHERE username = '$curr_user'";
+    $query = mysqli_query($conn, $getFavSql);
 }
 function remove(){
 
@@ -94,7 +100,8 @@ function sortItems(){
 
 }
 function displayFav(){
-$getFavSql = "SELECT favourites FROM users WHERE username = '$_SESSION['loggedas']'";
+$curr_user = $_SESSION["loggedas"];
+$getFavSql = "SELECT favourites FROM users WHERE username = '$curr_user'";
 $favQuery = mysqli_query($conn, $getFavSql);
 $favItemsArr = mysqli_fetch_all($favQuery);
  foreach($favItemsArr as $itemArr) {
