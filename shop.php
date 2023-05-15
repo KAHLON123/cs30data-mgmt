@@ -57,13 +57,24 @@ if (isset($_GET['logout'])) {
     echo "<br /><img src='img/" . $itemArr[0] . "' width='300'>";
  }
 if (isset($_POST['submit'])){
+ 
     switch ($_POST['s']){
         case "1":
-            $checkboxArr = $_POST['option'];
+            if (empty($_POST['option'])) {
+                $checkboxArr = [];
+                echo "<h2>Please choose an item from above...</h2>";
+            } else {
+                $checkboxArr = $_POST['option'];
+            }
             add($conn, $checkboxArr);
             break;
         case "2":
-            $checkboxArr = $_POST['option'];
+            if (empty($_POST['option'])) {
+                $checkboxArr = [];
+                echo "<h2>Please choose an item from above...</h2>";
+            } else {
+                $checkboxArr = $_POST['option'];
+            }
             remove($conn, $checkboxArr);
             break;
         case "3":
@@ -86,13 +97,14 @@ if (isset($_POST['logout'])) {
 function add($conn, $favToAdd){
     // parse array of favourite item IDs 
     $curr_user = $_SESSION["loggedas"];
-    $getFavSql = "SELECT favourites FROM users WHERE username = '$curr_user'";
+    $getFavSql = "SELECT favourites FROM users WHERE username = 'user1'";
     $favQuery = mysqli_query($conn, $getFavSql);
 
-    if ($favQuery){ // if !empty
+    $arrFromDB = fetchIntoArr($favQuery);
+    if ($favQuery){ 
+        if (!empty($arrFromDB)) {
         $favArr = fetchIntoArr($favQuery);
-    } else {
-        $favArr = [];
+        }
     }
 
     // put new values into array from sql
@@ -104,25 +116,27 @@ function add($conn, $favToAdd){
 
     $favStr = json_encode(array_unique($favArr));
     echo $favStr;
-    $sql = "UPDATE users SET favourites = '$favStr' WHERE username = '$curr_user'";
+    $sql = "UPDATE users SET favourites = 'favouriteTEST' WHERE username = 'vlody'";
     $query = mysqli_query($conn, $getFavSql);
 }
-function remove($conn){
+function remove($conn, $checkboxArr){
     //for each element in array if its eqal to value to delete, remove from arrray
-    $sql = "UPDATE users SET favourites = '$'";
+    // foreach ()
+    // $sql = "UPDATE users SET favourites = '$'";
 }
 function filterItems(){
 
 }
 function alphabetItems($itemsArr){
-    $temp = [];
-    foreach($itemsArr as $itemArr) {
-        array_push($temp, $itemArr[0]);
-     }
-     bubblesort($temp);
-     for ($i = 0; $i < count($temp); $i++) {
-        echo "<img src='img/" . $temp[$i] . "' width='300'><br />";
-     }
+    $sql = "SELECT * FROM 'users' ORDER BY 'price' ASC";
+    // $temp = [];
+    // foreach($itemsArr as $itemArr) {
+    //     array_push($temp, $itemArr[0]);
+    //  }
+    //  bubblesort($temp);
+    //  for ($i = 0; $i < count($temp); $i++) {
+    //     echo "<img src='img/" . $temp[$i] . "' width='300'><br />";
+    //  }
 }
 function displayFav($conn){
     $curr_user = $_SESSION["loggedas"];
@@ -143,7 +157,6 @@ function fetchIntoArr($query){
     }
     return $arr; 
 }
-
 function bubblesort($arr){
     for ($i = 1; $i < count($arr);$i++ ) {
         for ($n = 0; $n < count($arr) - 1; $n++) {
