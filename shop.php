@@ -94,33 +94,37 @@ if (isset($_POST['logout'])) {
     header("location: register.php");
 }
 
-function add($conn, $favToAdd){
+function add($conn, $favArr){
+    echo "favArr<br>";
+    print_r($favArr);
+
     // parse array of favourite item IDs 
     $curr_user = $_SESSION["loggedas"];
-    $getFavSql = "SELECT favourites FROM users WHERE username = 'user1'";
+    $getFavSql = "SELECT favourites FROM users WHERE username = '$curr_user'";
     $favQuery = mysqli_query($conn, $getFavSql);
-
+    
     $arrFromDB = fetchIntoArr($favQuery);
-    if ($favQuery){ 
+
+    echo "hi";
+    print_r($arrFromDB);
+    
+    if ($favQuery) {
         if (!empty($arrFromDB)) {
-        $favArr = fetchIntoArr($favQuery);
+            foreach ($arrFromDB as $item) {
+                array_push($favArr, $item);
+            }
         }
     }
-
-    // put new values into array from sql
-    foreach ($favToAdd as $item){
-        array_push($favArr, $item);
-    }
+var_dump($favArr);
 
     //delete duplicate values and insert into user favourite list
-
     $favStr = json_encode(array_unique($favArr));
     echo $favStr;
-    $sql = "UPDATE users SET favourites = 'favouriteTEST' WHERE username = 'vlody'";
-    $query = mysqli_query($conn, $getFavSql);
+    $sql = "UPDATE users SET favourites = '$favStr' WHERE username = '$curr_user'";
+    $query = mysqli_query($conn, $sql);
 }
 function remove($conn, $checkboxArr){
-    //for each element in array if its eqal to value to delete, remove from arrray
+    //for each element in array if its equal to value to delete, remove from arrray
     // foreach ()
     // $sql = "UPDATE users SET favourites = '$'";
 }
@@ -129,6 +133,7 @@ function filterItems(){
 }
 function alphabetItems($itemsArr){
     $sql = "SELECT * FROM 'users' ORDER BY 'price' ASC";
+    //$query = mysqli_query
     // $temp = [];
     // foreach($itemsArr as $itemArr) {
     //     array_push($temp, $itemArr[0]);
@@ -151,6 +156,9 @@ function displayFav($conn){
 // HELPERS?
 function fetchIntoArr($query){
     $temp = mysqli_fetch_all($query);
+    echo "TEMP<br>";
+    print_r($temp);
+
     $arr = [];
     foreach ($temp as $value){
         array_push($arr, $value[0]);
