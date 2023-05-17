@@ -95,7 +95,7 @@ if (isset($_POST['logout'])) {
 }
 
 function add($conn, $favArr){
-    echo "favArr<br>";
+    echo "<h2>favArr<</h2>";
     print_r($favArr);
 
     // parse array of favourite item IDs 
@@ -104,22 +104,21 @@ function add($conn, $favArr){
     $favQuery = mysqli_query($conn, $getFavSql);
     
     $arrFromDB = fetchIntoArr($favQuery);
-
-    echo "hi";
+    echo "<h2>Array from DB</h2>";
     print_r($arrFromDB);
-    
+
+    //merge DB and form array only if not a duplicate value
+
+    $arrToAdd = [];
     if ($favQuery) {
         if (!empty($arrFromDB)) {
-            foreach ($arrFromDB as $item) {
-                array_push($favArr, $item);
-            }
+            for ($i = 0; $ < count($))
         }
     }
-var_dump($favArr);
-
+    
     //delete duplicate values and insert into user favourite list
-    $favStr = json_encode(array_unique($favArr));
-    echo $favStr;
+    $favStr = json_encode($arrToAdd);
+    echo "<h2>favstr</h2>" . $favStr;
     $sql = "UPDATE users SET favourites = '$favStr' WHERE username = '$curr_user'";
     $query = mysqli_query($conn, $sql);
 }
@@ -156,15 +155,10 @@ function displayFav($conn){
 // HELPERS?
 function fetchIntoArr($query){
     $temp = mysqli_fetch_all($query);
-    echo "TEMP<br>";
-    print_r($temp);
-
-    $arr = [];
-    foreach ($temp as $value){
-        array_push($arr, $value[0]);
-    }
-    return $arr; 
+    $json_str = $temp[0][0];
+    return json_decode($json_str);
 }
+
 function bubblesort($arr){
     for ($i = 1; $i < count($arr);$i++ ) {
         for ($n = 0; $n < count($arr) - 1; $n++) {
