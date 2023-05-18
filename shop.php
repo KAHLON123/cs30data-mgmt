@@ -108,12 +108,11 @@ function add($conn, $favArr){
     print_r($arrFromDB);
 
     //merge DB and form array only if not a duplicate value
-
     $arrToAdd = [];
-    if ($favQuery) {
-        if (!empty($arrFromDB)) {
-            for ($i = 0; $ < count($))
-        }
+    if ($favQuery && !empty($arrFromDB)) {
+        // call function hereeee
+    } else {
+        $arrToAdd = $favArr;
     }
     
     //delete duplicate values and insert into user favourite list
@@ -153,6 +152,13 @@ function displayFav($conn){
 }
 
 // HELPERS?
+function ifInArr($arr, $item){
+    for ($i = 0; $i < count($arr); $i++) {
+        if (array_key_exists($favArr[$i], $arrFromDB) {
+
+        }
+    }
+}
 function fetchIntoArr($query){
     $temp = mysqli_fetch_all($query);
     $json_str = $temp[0][0];
