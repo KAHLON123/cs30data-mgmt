@@ -49,15 +49,18 @@ if (isset($_GET['logout'])) {
 </section>
 
 <?php
-// display all items
- $disAllSql = "SELECT img FROM items WHERE 1";
- $disAllquery = mysqli_query($conn, $disAllSql);
- $itemsArr = mysqli_fetch_all($disAllquery);
- foreach($itemsArr as $itemArr) {
-    echo "<br /><img src='img/" . $itemArr[0] . "' width='300'>";
- }
+// display all item images with their price
+$fetchImgSql = "SELECT img FROM items WHERE 1";
+$imgQuery = mysqli_query($conn, $fetchImgSql);
+$imgArr = mysqli_fetch_all($imgQuery);
+$fetchPriceSql = "SELECT price FROM items WHERE 1";
+$priceQuery = mysqli_query($conn, $fetchPriceSql);
+$priceArr = mysqli_fetch_all($priceQuery);
+    for ($i = 0; $i < count($imgArr); $i++) {
+        echo "<br /><img src='img/" . $imgArr[$i][0] . "' width='300'>" . "<h3>Price: </h3> $" . $priceArr[$i][0];
+    }
+
 if (isset($_POST['submit'])){
- 
     switch ($_POST['s']){
         case "1":
             if (empty($_POST['option'])) {
@@ -110,7 +113,9 @@ function add($conn, $favArr){
     //merge DB and form array only if not a duplicate value
     $arrToAdd = [];
     if ($favQuery && !empty($arrFromDB)) {
-        // call function hereeee
+        if (inArr($arrFromDB, $favArr) == -1) {
+            array_push($arrToAdd, $favArr);
+        }
     } else {
         $arrToAdd = $favArr;
     }
@@ -129,17 +134,10 @@ function remove($conn, $checkboxArr){
 function filterItems(){
 
 }
-function alphabetItems($itemsArr){
+function alphabetItems($conn){
     $sql = "SELECT * FROM 'users' ORDER BY 'price' ASC";
-    //$query = mysqli_query
-    // $temp = [];
-    // foreach($itemsArr as $itemArr) {
-    //     array_push($temp, $itemArr[0]);
-    //  }
-    //  bubblesort($temp);
-    //  for ($i = 0; $i < count($temp); $i++) {
-    //     echo "<img src='img/" . $temp[$i] . "' width='300'><br />";
-    //  }
+    fetchIntoArr(mysqli_query($conn, $sql)); 
+    
 }
 function displayFav($conn){
     $curr_user = $_SESSION["loggedas"];
@@ -152,15 +150,18 @@ function displayFav($conn){
 }
 
 // HELPERS?
-function ifInArr($arr, $item){
+function inArr($arr, $item){
     for ($i = 0; $i < count($arr); $i++) {
-        if (array_key_exists($favArr[$i], $arrFromDB) {
-
+        if (array_key_exists($item[$i], $arr)) {
+            return $i;
+        } else {
+            return -1;
         }
     }
 }
 function fetchIntoArr($query){
     $temp = mysqli_fetch_all($query);
+    var_dump($temp);
     $json_str = $temp[0][0];
     return json_decode($json_str);
 }
