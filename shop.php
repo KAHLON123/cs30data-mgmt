@@ -41,7 +41,7 @@ if (isset($_GET['logout'])) {
             <option value="1">Add to favourites</option>
             <option value="2">Remove from favourites</option>
             <option value="3">Filter by </option>
-            <option value="4">Alphabetize</option>
+            <option value="4">Sort by price</option>
             <option value="5">Only display favourites </option>
         </select><br />
         <input type="submit" value="submit" name="submit"><br />
@@ -50,15 +50,10 @@ if (isset($_GET['logout'])) {
 
 <?php
 // display all item images with their price
-$fetchImgSql = "SELECT img FROM items WHERE 1";
-$imgQuery = mysqli_query($conn, $fetchImgSql);
-$imgArr = mysqli_fetch_all($imgQuery);
-$fetchPriceSql = "SELECT price FROM items WHERE 1";
-$priceQuery = mysqli_query($conn, $fetchPriceSql);
-$priceArr = mysqli_fetch_all($priceQuery);
-    for ($i = 0; $i < count($imgArr); $i++) {
-        echo "<br /><img src='img/" . $imgArr[$i][0] . "' width='300'>" . "<h3>Price: </h3> $" . $priceArr[$i][0];
-    }
+$sql = "SELECT img, price FROM items WHERE 1";
+$query = mysqli_query($conn, $sql);
+$arr = mysqli_fetch_all($query);
+display($arr);
 if (isset($_POST['submit'])){
     switch ($_POST['s']){
         case "1":
@@ -83,7 +78,7 @@ if (isset($_POST['submit'])){
             filterItems();
             break;
         case "4":
-            alphabetItems($itemsArr);
+            priceSort($conn);
             break;
         case "5":
             displayFav($conn);
@@ -133,10 +128,11 @@ function remove($conn, $checkboxArr){
 function filterItems(){
 
 }
-function alphabetItems($conn){
-    $sql = "SELECT * FROM 'users' ORDER BY 'price' ASC";
-    fetchIntoArr(mysqli_query($conn, $sql)); 
-    
+function priceSort($conn){
+    $sql = "SELECT img FROM items ORDER BY price ASC";
+    $arr = fetchIntoArr(mysqli_query($conn, $sql));
+    echo "<h2>ascending price arr</h2>";
+    var_dump($arr);
 }
 function displayFav($conn){
     $curr_user = $_SESSION["loggedas"];
@@ -149,6 +145,11 @@ function displayFav($conn){
 }
 
 // HELPERS?
+function display($arr){
+    for ($i = 0; $i < count($arr); $i++) {
+        echo "<br /><img src='img/" . $arr[$i][0] . "' width='300'>" . "<h3>Price: </h3> $" . $arr[$i][1];
+    }
+}
 function inArr($arr, $item){
     for ($i = 0; $i < count($arr); $i++) {
         if (array_key_exists($item[$i], $arr)) {
@@ -160,7 +161,6 @@ function inArr($arr, $item){
 }
 function fetchIntoArr($query){
     $temp = mysqli_fetch_all($query);
-    var_dump($temp);
     $json_str = $temp[0][0];
     return json_decode($json_str);
 }
