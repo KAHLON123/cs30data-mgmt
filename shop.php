@@ -59,7 +59,6 @@ $priceArr = mysqli_fetch_all($priceQuery);
     for ($i = 0; $i < count($imgArr); $i++) {
         echo "<br /><img src='img/" . $imgArr[$i][0] . "' width='300'>" . "<h3>Price: </h3> $" . $priceArr[$i][0];
     }
-
 if (isset($_POST['submit'])){
     switch ($_POST['s']){
         case "1":
