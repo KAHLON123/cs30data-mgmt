@@ -119,7 +119,7 @@ function add($conn, $favArr){
         $arrToAdd = $favArr;
     }
     
-    //delete duplicate values and insert into user favourite list
+    // Insert into user favourite list
     $favStr = json_encode($arrToAdd);
     echo "<h2>favstr</h2>" . $favStr;
     $sql = "UPDATE users SET favourites = '$favStr' WHERE username = '$curr_user'";
@@ -164,43 +164,22 @@ function fetchIntoArr($query){
     $json_str = $temp[0][0];
     return json_decode($json_str);
 }
+function binarySearch($arr, $item){
+    $lowI = 0;
+    $highI = sizeof($arr) - 1;
+    while ($lowI<= $highI) {
+        $midI = (int)floor(($lowI + $highI) / 2);
+        if ($arr[$midI] == $item) {
+            return $midI;
+        } elseif ($arr[$midI] > $item) {
+            $highI = $midI - 1;
+        } else if($arr[$midI+1] < $item){
+          $lowI = $midI + 1;
+        }
+    }
+    return -1;
+}
 
-function bubblesort($arr){
-    for ($i = 1; $i < count($arr);$i++ ) {
-        for ($n = 0; $n < count($arr) - 1; $n++) {
-            if ($arr[$n] > $arr[$n + 1]) {
-                $hold = $arr[$n];
-                $arr[$n] = $arr[$n + 1];
-                $arr[$n + 1] = $hold;
-            }
-        }
-    }
-}
-function insertionSort($arr){
-    $count = count($arr);
-    for ($i = 1; $i < $count; $i++) {
-        $insert = $arr[$i];
-        $position = $i - 1;
-        while ($insert < $arr[$position] && $position >= 0) {
-            $arr[$position + 1] = $arr[$position];
-            $arr[$position] = $insert;
-            $position--;
-        }
-    }
-}
-function selectionSort($arr, $count){
-    for ($i = 0; $i < $count - 1; $i++) {
-        $mid = $i;
-        for ($n = $i + 1; $n < $count; $n++) {
-            if ($arr[$n] < $arr[$mid]) {
-                $mid = $n;
-            }
-        }
-        $hold = $arr[$mid];
-        $arr[$mid] = $arr[$i];
-        $arr[$i] = $hold;
-    }
-}
 ?>
 </body>
 </html>
