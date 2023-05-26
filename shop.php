@@ -40,9 +40,8 @@ if (isset($_GET['logout'])) {
         <select name="s">
             <option value="1">Add to favourites</option>
             <option value="2">Remove from favourites</option>
-            <option value="3">Filter by </option>
-            <option value="4">Sort by price</option>
-            <option value="5">Only display favourites </option>
+            <option value="3">Sort by price</option>
+            <option value="4">Only display favourites </option>
         </select><br />
         <input type="submit" value="submit" name="submit"><br />
     </form>
@@ -75,12 +74,9 @@ if (isset($_POST['submit'])){
             remove($conn, $checkboxArr);
             break;
         case "3":
-            filterItems();
-            break;
-        case "4":
             priceSort($conn);
             break;
-        case "5":
+        case "4":
             displayFav($conn);
             break;
     }
@@ -92,31 +88,22 @@ if (isset($_POST['logout'])) {
 }
 
 function add($conn, $favArr){
-    echo "<h2>favArr<</h2>";
-    print_r($favArr);
-
     // parse array of favourite item IDs 
     $curr_user = $_SESSION["loggedas"];
     $getFavSql = "SELECT favourites FROM users WHERE username = '$curr_user'";
     $favQuery = mysqli_query($conn, $getFavSql);
     
     $arrFromDB = fetchIntoArr($favQuery);
-    echo "<h2>Array from DB</h2>";
-    print_r($arrFromDB);
 
     //merge DB and form array only if not a duplicate value
     $arrToAdd = [];
     if ($favQuery && !empty($arrFromDB)) {
-        if (inArr($arrFromDB, $favArr) == -1) {
-            array_push($arrToAdd, $favArr);
-        }
+        addToArr($arrFromDB, $favArr, $arrToAdd);
     } else {
         $arrToAdd = $favArr;
     }
-    
     // Insert into user favourite list
     $favStr = json_encode($arrToAdd);
-    echo "<h2>favstr</h2>" . $favStr;
     $sql = "UPDATE users SET favourites = '$favStr' WHERE username = '$curr_user'";
     $query = mysqli_query($conn, $sql);
 }
@@ -125,23 +112,25 @@ function remove($conn, $checkboxArr){
     // foreach ()
     // $sql = "UPDATE users SET favourites = '$'";
 }
-function filterItems(){
-
-}
 function priceSort($conn){
     $sql = "SELECT img FROM items ORDER BY price ASC";
     $arr = fetchIntoArr(mysqli_query($conn, $sql));
-    echo "<h2>ascending price arr</h2>";
-    var_dump($arr);
+    display($arr);
 }
 function displayFav($conn){
+    // get users favourite items
     $curr_user = $_SESSION["loggedas"];
-    $getFavSql = "SELECT favourites FROM users WHERE username = '$curr_user'";
-    $favQuery = mysqli_query($conn, $getFavSql);
-    $favItemsArr = mysqli_fetch_all($favQuery);
-    foreach($favItemsArr as $itemArr) {
-        echo "<img src='img/" . $itemArr[0] . "' width='300'><br />";
+    $sql = "SELECT favourites FROM users WHERE username = '$curr_user'";
+    $favFromUsers = fetchIntoArr(mysqli_query($conn, $sql));
+    echo "fav from users<br />";
+    var_dump($favFromUsers);
+    for ($i = 0; count($favFromUsers); $i++) {
+        
     }
+    $sql = "SELECT img, price FROM items WHERE itemName = '$favFromUsers'";
+    $temp = mysqli_query($conn, $sql);
+    echo "arr of favs from DB<br />";
+    var_dump($temp);
 }
 
 // HELPERS?
@@ -150,12 +139,11 @@ function display($arr){
         echo "<br /><img src='img/" . $arr[$i][0] . "' width='300'>" . "<h3>Price: </h3> $" . $arr[$i][1];
     }
 }
-function inArr($arr, $item){
-    for ($i = 0; $i < count($arr); $i++) {
-        if (array_key_exists($item[$i], $arr)) {
-            return $i;
-        } else {
-            return -1;
+function addToArr($checkArr, $itemArr, $addArr){
+    for ($i = 0; $i < count($itemArr); $i++) {
+        //if value isnt in arr to check (favArr from form), put it in arr to add
+        if (!array_key_exists($itemArr[$i], $checkArr)) {
+            array_push($addArr, $itemArr[$i]);
         }
     }
 }
